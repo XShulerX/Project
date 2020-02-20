@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Project
+namespace AsteroidGame
 {
     static class Program
     {
@@ -16,7 +16,20 @@ namespace Project
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+
+            var form = new Form();
+            form.Width = 800;
+            form.Height = 600;
+
+            form.Show();
+
+            Game.Initialize(form);
+            Game.Load();
+            Game.Draw();
+
+            Application.Run(form);
         }
+
+        
     }
 }
