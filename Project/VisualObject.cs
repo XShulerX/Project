@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
-namespace AsteroidGame
+namespace Project
 {
     class VisualObject
     {
@@ -22,9 +17,15 @@ namespace AsteroidGame
 
         public virtual void Draw(Graphics g)
         {
-            g.DrawEllipse(Pens.White,
-                _Position.X, _Position.Y,
-                _Size.Width, _Size.Width);
+
+            using (Image image = Image.FromFile("meteor.png"))
+            {
+                g.DrawImage(image, _Position.X, _Position.Y, _Size.Width, _Size.Width);
+            }
+
+            //g.DrawEllipse(Pens.White,
+            //    _Position.X, _Position.Y,
+            //    _Size.Width, _Size.Width);
         }
 
         public virtual void Update()
@@ -34,12 +35,11 @@ namespace AsteroidGame
                 _Position.Y + _Direction.Y);
 
             if (_Position.X < 0)
-                //_Direction.X *= -1;
                 _Direction = new Point(-_Direction.X, _Direction.Y);
             if (_Position.Y < 0)
                 _Direction = new Point(_Direction.X, -_Direction.Y);
 
-            if(_Position.X > Game.Width)
+            if (_Position.X > Game.Width)
                 _Direction = new Point(-_Direction.X, _Direction.Y);
             if (_Position.Y > Game.Height)
                 _Direction = new Point(_Direction.X, -_Direction.Y);

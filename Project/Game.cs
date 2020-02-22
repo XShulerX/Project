@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace AsteroidGame
+namespace Project
 {
     static class Game
     {
@@ -27,7 +28,7 @@ namespace AsteroidGame
             Graphics g = form.CreateGraphics();
             __Buffer = __Context.Allocate(g, new Rectangle(0, 0, Width, Height));
 
-            var timer = new Timer { Interval = 100 };
+            var timer = new Timer { Interval = 17 };
             timer.Tick += OnTimerTick;
             timer.Start();
         }
@@ -38,21 +39,40 @@ namespace AsteroidGame
             Draw();
         }
 
-        private static VisualObject[] __GameObjects;
+        private static List<VisualObject> __GameObjects;
+
         public static void Load()
         {
-            __GameObjects = new VisualObject[30];
-            for (var i = 0; i < __GameObjects.Length / 2; i++)
-                __GameObjects[i] = new VisualObject(
-                    new Point(600, i * 20),
-                    new Point(15 - i, 20 - i),
-                    new Size(20, 20));
+            __GameObjects = new List<VisualObject>();
+            for (var i = 0; i < 15; i++)
+            {
+                var visObj = new VisualObject(
+                                    new Point(600, i * 20),
+                                    new Point(15 - i, 20 - i),
+                                    new Size(20, 20));
+                __GameObjects.Add(visObj);
+            }
 
-            for (var i = __GameObjects.Length / 2; i < __GameObjects.Length; i++)
-                __GameObjects[i] = new Star(
-                    new Point(600, i * 20),
-                    new Point(- i, 0),
+
+            for (var i = 15; i < 30; i++)
+            {
+                var star = new Star(
+                   new Point(600, i * 20),
+                    new Point(-i, 0),
                     20);
+                __GameObjects.Add(star);
+            }
+
+            var r = new Random();
+            for (var i = 1; i <= 5; i++)
+            {
+                var sputnik = new Sputnik(
+                    new Point(r.Next(Width-100), 20*i),
+                    new Point(r.Next(5),1),
+                    20, r.Next(30));
+                __GameObjects.Add(sputnik);
+            }
+
         }
 
         public static void Draw()
