@@ -45,6 +45,7 @@ namespace Project
                 NewAngle();
             }
 
+
             if (_Position.Y > Game.Height)
             {
                 _Direction = new Point(_Direction.X, -_Direction.Y);
