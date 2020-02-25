@@ -16,9 +16,9 @@ namespace Project
         {
             g.TranslateTransform(_Position.X,_Position.Y);
             g.RotateTransform(_Angle);
-            g.FillRectangle(new SolidBrush(Color.White), 0, 0, _Size.Width, _Size.Height);
-            g.FillRectangle(new SolidBrush(Color.White), 0 + _Size.Width / 3, 0 + 15, _Size.Width / 3 * 2, _Size.Height / 3 * 2);
-            g.FillRectangle(new SolidBrush(Color.White), 0 + _Size.Width / 3, 0 - 11, _Size.Width / 3 * 2, _Size.Height / 3 * 2);
+            g.FillRectangle(Brushes.White, 0, 0, _Size.Width, _Size.Height);
+            g.FillRectangle(Brushes.White, 0 + _Size.Width / 3, 0 + 15, _Size.Width / 3 * 2, _Size.Height / 3 * 2);
+            g.FillRectangle(Brushes.White, 0 + _Size.Width / 3, 0 - 11, _Size.Width / 3 * 2, _Size.Height / 3 * 2);
             g.ResetTransform();
         }
 
