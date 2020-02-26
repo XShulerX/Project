@@ -1,17 +1,18 @@
 ﻿using System;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Project.VisualObjects.Interfaces;
-
 namespace Project.VisualObjects
 {
-    public abstract class CollisionObject : VisualObject, ICollision
+    class Asteroid : ImageObject, ICollision
     {
-        protected CollisionObject(Point Position, Point Direction, Size Size) : base(Position, Direction, Size)
+        public Asteroid(Point Position, Point Direction, int ImageSize)
+            : base(Position, Direction, new Size(ImageSize, ImageSize), Properties.Resources.Asteroid)
         {
+
         }
 
         public bool CheckCollision(ICollision obj) => Rect.IntersectsWith(obj.Rect);

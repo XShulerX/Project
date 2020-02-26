@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Project.VisualObjects;
+using Project.VisualObjects.Interfaces;
 
 namespace Project
 {
     static class Game
     {
+        /// <summary>Таймаут отрисовки одной сцены</summary>
+        private const int __FrameTimeout = 10;
+
         private static BufferedGraphicsContext __Context;
         private static BufferedGraphics __Buffer;
 
@@ -28,7 +33,7 @@ namespace Project
             Graphics g = form.CreateGraphics();
             __Buffer = __Context.Allocate(g, new Rectangle(0, 0, Width, Height));
 
-            var timer = new Timer { Interval = 17 };
+            var timer = new Timer { Interval = __FrameTimeout };
             timer.Tick += OnTimerTick;
             timer.Start();
         }
@@ -39,42 +44,43 @@ namespace Project
             Draw();
         }
 
-        private static List<VisualObject> __GameObjects;
-
+        private static VisualObject[] __GameObjects;
+        private static Bullet __Bullet;
         public static void Load()
         {
-            __GameObjects = new List<VisualObject>();
-            for (var i = 0; i < 15; i++)
-            {
-                var visObj = new VisualObject(
-                                    new Point(600, i * 20),
-                                    new Point(15 - i, 20 - i),
-                                    new Size(20, 20));
-                __GameObjects.Add(visObj);
-            }
+            var game_objects = new List<VisualObject>();
+            var rnd = new Random();
 
+            const int stars_count = 150;
+            const int star_size = 5;
+            const int star_max_speed = 20;
+            for (var i = 0; i < stars_count; i++)
+                game_objects.Add(new Star(
+                    new Point(rnd.Next(0, Width), rnd.Next(0, Height)),
+                    new Point(-rnd.Next(0, star_max_speed), 0),
+                    star_size));
 
-            for (var i = 15; i < 30; i++)
-            {
-                var star = new Star(
-                   new Point(600, i * 20),
-                    new Point(-i, 0),
-                    20);
-                __GameObjects.Add(star);
-            }
+            const int ellipses_count = 20;
+            const int ellipses_size_x = 20;
+            const int ellipses_size_y = 30;
 
-            var r = new Random();
-            for (var i = 1; i <= 5; i++)
-            {
-                var sputnik = new Sputnik(
-                    new Point(r.Next(Width-100), 20*i),
-                    new Point(r.Next(5),1),
-                    20, r.Next(30));
-                __GameObjects.Add(sputnik);
-            }
+            for (var i = 0; i < ellipses_count; i++)
+                game_objects.Add(new EllipseObject(
+                    new Point(600, i * 20),
+                    new Point(15 - i, 20 - i),
+                    new Size(ellipses_size_x, ellipses_size_y)));
 
+            const int sputniks_count = 5;
+            for (var i = 0; i < sputniks_count; i++)
+                game_objects.Add(
+                    new Sputnik(new Point(rnd.Next(Width - 100), 20 * i),
+                    new Point(rnd.Next(5), 1),
+                    20, rnd.Next(30)));
+            __GameObjects = game_objects.ToArray();
+            __Bullet = new Bullet(200);
         }
 
+        /// <summary>Метод визуализации сцены</summary>
         public static void Draw()
         {
             var g = __Buffer.Graphics;
@@ -86,13 +92,35 @@ namespace Project
             foreach (var visual_object in __GameObjects)
                 visual_object.Draw(g);
 
+            __Bullet.Draw(g);
+
             __Buffer.Render();
         }
 
+        /// <summary>Обновление состояния объектов сцены</summary>
         public static void Update()
         {
             foreach (var visual_object in __GameObjects)
                 visual_object.Update();
+
+            __Bullet.Update();
+            if (__Bullet.Position.X > Width)
+                __Bullet = new Bullet(new Random().Next(Width));
+
+            for (var i = 0; i < __GameObjects.Length; i++)
+            {
+                var obj = __GameObjects[i];
+                if (obj is ICollision) // Применить "сопоставление с образцом"!
+                {
+                    var collision_object = (ICollision)obj;
+                    if (__Bullet.CheckCollision(collision_object))
+                    {
+                        __Bullet = new Bullet(new Random().Next(Width));
+                        __GameObjects[i] = null;
+                        MessageBox.Show("Астероид уничтожен!", "Столкновение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                }
+            }
         }
     }
 }

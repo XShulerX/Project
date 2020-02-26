@@ -6,7 +6,7 @@ namespace Project.VisualObjects
     {
         private Image _Image;
 
-        protected ImageObject(Point Position, Point Direction, Size size, Image Image) : base(Position, Direction, Size)
+        protected ImageObject(Point Position, Point Direction, Size Size, Image Image) : base(Position, Direction, Size)
         {
             _Image = Image;
         }

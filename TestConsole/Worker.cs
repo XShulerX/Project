@@ -1,9 +1,19 @@
-﻿using System;
-
-public abstract class Worker
+﻿public abstract class Worker
 {
-    private string Name { get; set; }
-    private int Age { get; set; }
+    protected string _Name;
+    protected int _Age;
+    protected double _Price;
+
+    public string Name => _Name;
+    public int Age => _Age;
+
+    protected Worker(int Age, string Name)
+    {
+        _Name = Name;
+        _Age = Age;
+    }
 
     protected abstract void Pay();
+
+    public override string ToString() => $"{Name}, {Age}, {_Price}";
 }
