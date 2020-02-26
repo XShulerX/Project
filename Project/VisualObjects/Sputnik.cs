@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Project
+namespace Project.VisualObjects
 {
     class Sputnik : VisualObject
     {
