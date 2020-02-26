@@ -1,32 +1,25 @@
 ﻿using System.Drawing;
 
-namespace Project
+namespace Project.VisualObjects
 {
-    class VisualObject
+    public abstract class VisualObject
     {
         protected Point _Position;
         protected Point _Direction;
         protected Size _Size;
 
-        public VisualObject(Point Position, Point Direction, Size Size)
+        public Point Position => _Position;
+
+        public Rectangle Rect => new Rectangle(_Position, _Size);
+        
+        protected VisualObject(Point Position, Point Direction, Size Size)
         {
             _Position = Position;
             _Direction = Direction;
             _Size = Size;
         }
 
-        public virtual void Draw(Graphics g)
-        {
-
-            using (Image image = Image.FromFile("meteor.png"))
-            {
-                g.DrawImage(image, _Position.X, _Position.Y, _Size.Width, _Size.Width);
-            }
-
-            //g.DrawEllipse(Pens.White,
-            //    _Position.X, _Position.Y,
-            //    _Size.Width, _Size.Width);
-        }
+        public abstract void Draw(Graphics g);
 
         public virtual void Update()
         {
