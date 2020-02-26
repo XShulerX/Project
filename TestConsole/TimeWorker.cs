@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace TestConsole
 {
-    class FixedWorker : Worker
+    class TimeWorker : Worker
     {
-        private double _FixedPrice;
+        private double _PricePerHour;
 
-        public FixedWorker(int Age, string Name, double FixedPrice)
-            :base(Age,Name)
+        public TimeWorker(int Age, string Name, double PricePerHour)
+            : base(Age, Name)
         {
-            _FixedPrice = FixedPrice;
+            _PricePerHour = PricePerHour;
             Pay();
         }
 
         protected override void Pay()
         {
-            _Price = _FixedPrice;
+            _Price = 20.8 * 8 * _PricePerHour;
         }
     }
 }

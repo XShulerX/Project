@@ -15,5 +15,5 @@
 
     protected abstract void Pay();
 
-    public override string ToString() => $"{Name}, {Age}, {_Price}";
+    public override string ToString() => $"Name: {Name}, Age: {Age}, Price: {_Price}";
 }
