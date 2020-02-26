@@ -63,7 +63,6 @@ namespace Project
             const int ellipses_count = 20;
             const int ellipses_size_x = 20;
             const int ellipses_size_y = 30;
-
             for (var i = 0; i < ellipses_count; i++)
                 game_objects.Add(new EllipseObject(
                     new Point(600, i * 20),
@@ -76,6 +75,13 @@ namespace Project
                     new Sputnik(new Point(rnd.Next(Width - 100), 20 * i),
                     new Point(rnd.Next(5), 1),
                     20, rnd.Next(30)));
+
+            const int asteroids_count = 15;
+            for (var i = 0; i < sputniks_count; i++)
+                game_objects.Add(
+                    new Asteroid(new Point(rnd.Next(Width - 100), 20 * i),
+                    new Point(rnd.Next(5), 1),
+                    20));
             __GameObjects = game_objects.ToArray();
             __Bullet = new Bullet(200);
         }
@@ -110,13 +116,15 @@ namespace Project
             for (var i = 0; i < __GameObjects.Length; i++)
             {
                 var obj = __GameObjects[i];
-                if (obj is ICollision) // Применить "сопоставление с образцом"!
+                if (obj is ICollision collision_object) // Применить "сопоставление с образцом"!
                 {
-                    var collision_object = (ICollision)obj;
                     if (__Bullet.CheckCollision(collision_object))
                     {
-                        __Bullet = new Bullet(new Random().Next(Width));
-                        __GameObjects[i] = null;
+                        __Bullet = new Bullet(new Random().Next(Height));
+                        __GameObjects[i] = new Asteroid(
+                            new Point(Width, new Random().Next(Height)),
+                            new Point(new Random().Next(5)*-1, 1), 20);
+                        //System.Diagnostics.Debug.WriteLine(__GameObjects[i].GetType());
                         MessageBox.Show("Астероид уничтожен!", "Столкновение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                 }
