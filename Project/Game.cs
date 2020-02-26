@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Project.VisualObjects;
+using Project.VisualObjects.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Project.VisualObjects;
-using Project.VisualObjects.Interfaces;
 
 namespace Project
 {
@@ -28,7 +28,8 @@ namespace Project
         {
             Width = form.Width;
             Height = form.Height;
-
+            if (Width > 1000 || Width < 0 || Height < 0 || Height > 1000)
+                throw new ArgumentOutOfRangeException();
             __Context = BufferedGraphicsManager.Current;
             Graphics g = form.CreateGraphics();
             __Buffer = __Context.Allocate(g, new Rectangle(0, 0, Width, Height));
@@ -75,8 +76,6 @@ namespace Project
                     new Sputnik(new Point(rnd.Next(Width - 100), 20 * i),
                     new Point(rnd.Next(5), 1),
                     20, rnd.Next(30)));
-
-            const int asteroids_count = 15;
             for (var i = 0; i < sputniks_count; i++)
                 game_objects.Add(
                     new Asteroid(new Point(rnd.Next(Width - 100), 20 * i),
@@ -123,7 +122,7 @@ namespace Project
                         __Bullet = new Bullet(new Random().Next(Height));
                         __GameObjects[i] = new Asteroid(
                             new Point(Width, new Random().Next(Height)),
-                            new Point(new Random().Next(5)*-1, 1), 20);
+                            new Point(new Random().Next(5) * -1, 1), 20);
                         //System.Diagnostics.Debug.WriteLine(__GameObjects[i].GetType());
                         MessageBox.Show("Астероид уничтожен!", "Столкновение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }

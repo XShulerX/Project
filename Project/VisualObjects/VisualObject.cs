@@ -11,9 +11,13 @@ namespace Project.VisualObjects
         public Point Position => _Position;
 
         public Rectangle Rect => new Rectangle(_Position, _Size);
-        
+
         protected VisualObject(Point Position, Point Direction, Size Size)
         {
+            if (Position.X < 0 || Position.Y < 0 || Size.Width < 0 || Size.Height < 0 || Direction.X > 20 || Direction.X < -20 || Direction.Y > 20 || Direction.Y < -20)
+            {
+                throw new GameObjectException("Попытка создать объект с неправильными характеристиками");
+            }
             _Position = Position;
             _Direction = Direction;
             _Size = Size;
