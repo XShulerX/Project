@@ -9,6 +9,8 @@ namespace Project.VisualObjects
 {
     class Asteroid : ImageObject, ICollision
     {
+        public int Power { get; set; } = 3;
+
         public Asteroid(Point Position, Point Direction, int ImageSize)
             : base(Position, Direction, new Size(ImageSize, ImageSize), Properties.Resources.Asteroid)
         {
