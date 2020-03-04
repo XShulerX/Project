@@ -1,4 +1,5 @@
 ﻿using Project.VisualObjects.Interfaces;
+using System;
 using System.Drawing;
 
 namespace Project.VisualObjects
@@ -27,6 +28,11 @@ namespace Project.VisualObjects
         public override void Update()
         {
             _Position = new Point(_Position.X + _Direction.X, _Position.Y);
+            if (_Position.X < 0)
+            {
+                _Position.X = Game.Width + _Size.Width;
+                _Position.Y = new Random().Next(0,Game.Height);
+            }
         }
     }
 }

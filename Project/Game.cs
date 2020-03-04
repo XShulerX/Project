@@ -102,13 +102,13 @@ namespace Project
                         new Point(-rnd.Next(0, asteroid_max_speed), 0),
                         asteroid_size));
             game_objects.Add(new HealthPack(
-                new Point(800, 300),
+                new Point(Width, rnd.Next(0, Height)),
                 new Point(-5),
                 new Size(20, 20)));
             __GameObjects = game_objects.ToArray();
             __Bullet = new Bullet(200);
             __Ship = new SpaceShip(new Point(10, 400), new Point(5, 5), new Size(10, 10));
-            
+
             __Ship.ShipDestroyed += OnShipDestroyed;
         }
 
@@ -153,14 +153,21 @@ namespace Project
                 {
                     collision_object = (ICollision)obj;
                     __Ship.CheckCollision(collision_object);
-                    if (__Bullet != null && __Bullet.CheckCollision(collision_object))
+                    if (__Ship.CheckCollision(collision_object) && collision_object is HealthPack healthPack)
+                    {
+                        __GameObjects[i] = new HealthPack(
+                            new Point(Width, new Random().Next(0, Height)),
+                            new Point(-5),
+                            new Size(20, 20));
+                    }
+                    if (__Bullet != null && __Bullet.CheckCollision(collision_object) && collision_object is Asteroid)
                     {
                         __Bullet = null;
                         __GameObjects[i] = new Asteroid(
                             new Point(Width, new Random().Next(Height)),
                             new Point(new Random().Next(5) * -1, 1), 20);
                         _Score += 10;
-                        //System.Diagnostics.Debug.WriteLine(__GameObjects[i].GetType());
+                        System.Diagnostics.Debug.WriteLine(__GameObjects[i].GetType());
                         //MessageBox.Show("Астероид уничтожен!", "Столкновение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                 }
