@@ -48,7 +48,7 @@ namespace Project
             switch (E.KeyCode)
             {
                 case Keys.ControlKey:
-                    __Bullet = new Bullet(__Ship.Position.Y);
+                    __Bullets.Add(new Bullet(__Ship.Position.Y));
                     break;
 
                 case Keys.Up:
@@ -69,7 +69,7 @@ namespace Project
 
         private static SpaceShip __Ship;
         private static VisualObject[] __GameObjects;
-        private static Bullet __Bullet;
+        private static List<Bullet> __Bullets = new List<Bullet>();
         private static int _Score;
         public static void Load()
         {
@@ -106,20 +106,19 @@ namespace Project
                 new Point(-5),
                 new Size(20, 20)));
             __GameObjects = game_objects.ToArray();
-            __Bullet = new Bullet(200);
-            __Ship = new SpaceShip(new Point(10, 400), new Point(5, 5), new Size(10, 10));
 
+            __Ship = new SpaceShip(new Point(10, 400), new Point(5, 5), new Size(10, 10));
             __Ship.ShipDestroyed += OnShipDestroyed;
         }
 
         private static void OnShipDestroyed(object Sender, EventArgs E)
         {
-            
+
             __Timer.Stop();
             __Buffer.Graphics.Clear(Color.DarkBlue);
             __Buffer.Graphics.DrawString("Game over!!!", new Font(FontFamily.GenericSerif, 60, FontStyle.Bold), Brushes.Red, 200, 100);
             __Buffer.Render();
-            
+
         }
 
         /// <summary>Метод визуализации сцены</summary>
@@ -132,7 +131,8 @@ namespace Project
             foreach (var visual_object in __GameObjects)
                 visual_object.Draw(g);
 
-            __Bullet?.Draw(g);
+            foreach (var bullet in __Bullets) bullet.Draw(g);
+
             __Ship.Draw(g);
             g.DrawString($"Energy: {__Ship.Energy}", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Italic), Brushes.White, 10, 10);
             g.DrawString($"Score: {_Score}", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Italic), Brushes.White, 10, 30);
@@ -145,9 +145,13 @@ namespace Project
             foreach (var visual_object in __GameObjects)
                 visual_object.Update();
 
-            __Bullet?.Update();
-            //if (__Bullet.Position.X > Width)
-            //    __Bullet = new Bullet(new Random().Next(Width));
+            var bullets_to_remove = new List<Bullet>();
+            foreach (var bullet in __Bullets)
+            {
+                bullet.Update();
+                if (bullet.Position.X > Width)
+                    bullets_to_remove.Add(bullet);
+            }
             for (var i = 0; i < __GameObjects.Length; i++)
             {
                 var obj = __GameObjects[i];
@@ -162,18 +166,19 @@ namespace Project
                             new Point(-5),
                             new Size(20, 20));
                     }
-                    if (__Bullet != null && __Bullet.CheckCollision(collision_object) && collision_object is Asteroid)
-                    {
-                        __Bullet = null;
-                        __GameObjects[i] = new Asteroid(
-                            new Point(Width, new Random().Next(Height)),
-                            new Point(new Random().Next(5) * -1, 1), 20);
-                        _Score += 10;
-                        //System.Diagnostics.Debug.WriteLine(__GameObjects[i].GetType());
-                        //MessageBox.Show("Астероид уничтожен!", "Столкновение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    }
+                    foreach (var bullet in __Bullets.ToArray())
+                        if (bullet.CheckCollision(collision_object))
+                        {
+                            bullets_to_remove.Add(bullet);
+                            __GameObjects[i] = new Asteroid(
+                                    new Point(Width, new Random().Next(Height)),
+                                    new Point(new Random().Next(5) * -1, 1), 20);
+                            _Score += 10;
+                        }
                 }
             }
+            foreach (var bullet in bullets_to_remove)
+                __Bullets.Remove(bullet);
 
         }
 
