@@ -114,12 +114,12 @@ namespace Project
 
         private static void OnShipDestroyed(object Sender, EventArgs E)
         {
-            Journal = GameOverToJournal;
+            
             __Timer.Stop();
             __Buffer.Graphics.Clear(Color.DarkBlue);
             __Buffer.Graphics.DrawString("Game over!!!", new Font(FontFamily.GenericSerif, 60, FontStyle.Bold), Brushes.Red, 200, 100);
             __Buffer.Render();
-            Journal();
+            
         }
 
         /// <summary>Метод визуализации сцены</summary>
