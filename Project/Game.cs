@@ -100,10 +100,14 @@ namespace Project
                         new Point(rnd.Next(0, Width), rnd.Next(0, Height)),
                         new Point(-rnd.Next(0, asteroid_max_speed), 0),
                         asteroid_size));
-
+            game_objects.Add(new HealthPack(
+                new Point(800, 300),
+                new Point(-5),
+                new Size(8, 8)));
             __GameObjects = game_objects.ToArray();
             __Bullet = new Bullet(200);
             __Ship = new SpaceShip(new Point(10, 400), new Point(5, 5), new Size(10, 10));
+            
             __Ship.ShipDestroyed += OnShipDestroyed;
         }
 
@@ -127,7 +131,6 @@ namespace Project
 
             __Bullet?.Draw(g);
             __Ship.Draw(g);
-
             g.DrawString($"Energy: {__Ship.Energy}", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Italic), Brushes.White, 10, 10);
 
             __Buffer.Render();
@@ -139,10 +142,9 @@ namespace Project
             foreach (var visual_object in __GameObjects)
                 visual_object.Update();
 
-            __Bullet.Update();
-            if (__Bullet.Position.X > Width)
-                __Bullet = new Bullet(new Random().Next(Width));
-
+            __Bullet?.Update();
+            //if (__Bullet.Position.X > Width)
+            //    __Bullet = new Bullet(new Random().Next(Width));
             for (var i = 0; i < __GameObjects.Length; i++)
             {
                 var obj = __GameObjects[i];

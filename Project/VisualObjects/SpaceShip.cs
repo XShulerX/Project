@@ -55,6 +55,9 @@ namespace Project.VisualObjects
             if (is_collision && obj is Asteroid asteroid)
             {
                 ChangeEnergy(-asteroid.Power);
+            }else if(is_collision && obj is HealthPack healthPack)
+            {
+                ChangeEnergy(healthPack.bonusEnergy);
             }
 
             return is_collision;

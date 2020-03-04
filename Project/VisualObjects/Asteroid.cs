@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Project.VisualObjects.Interfaces;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Project.VisualObjects.Interfaces;
 namespace Project.VisualObjects
 {
     class Asteroid : ImageObject, ICollision
