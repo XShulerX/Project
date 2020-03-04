@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="VisualObjects\Asteroid.cs" />
     <Compile Include="VisualObjects\GameObjectException.cs" />
+    <Compile Include="VisualObjects\HealthPack.cs" />
     <Compile Include="VisualObjects\Interfaces\ICollision.cs" />
     <Compile Include="VisualObjects\Sputnik.cs" />
     <Compile Include="Game.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace Project.VisualObjects
 {
@@ -14,10 +15,11 @@ namespace Project.VisualObjects
 
         protected VisualObject(Point Position, Point Direction, Size Size)
         {
-            if (Position.X < 0 || Position.Y < 0 || Size.Width < 0 || Size.Height < 0 || Direction.X > 20 || Direction.X < -20 || Direction.Y > 20 || Direction.Y < -20)
+            if (Position.X < 0 || Position.Y < 0 || Size.Width < 0 || Size.Height < 0 || Math.Abs(Direction.X) > 20 || Math.Abs(Direction.Y) > 20)
             {
                 throw new GameObjectException("Попытка создать объект с неправильными характеристиками");
             }
+            
             _Position = Position;
             _Direction = Direction;
             _Size = Size;
