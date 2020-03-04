@@ -22,8 +22,6 @@ namespace Project.VisualObjects
             var rect = Rect;
             g.FillEllipse(Brushes.Red, rect);
             g.DrawEllipse(Pens.White, rect);
-            //g.FillEllipse(Brushes.Red, _Position.X, _Position.Y, _Size.Width, _Size.Height);
-            //g.DrawEllipse(Pens.White, _Position.X, _Position.Y, _Size.Width, _Size.Height);
         }
 
         public override void Update()

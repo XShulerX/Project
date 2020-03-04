@@ -27,7 +27,6 @@ namespace Project.VisualObjects
         public override void Update()
         {
             _Position = new Point(_Position.X + _Direction.X, _Position.Y);
-
         }
     }
 }

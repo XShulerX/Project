@@ -39,7 +39,7 @@ namespace Project
             timer.Tick += OnTimerTick;
             timer.Start();
             __Timer = timer;
-
+            _Score = 0;
             form.KeyDown += OnFormKeyDown;
         }
 
@@ -70,6 +70,7 @@ namespace Project
         private static SpaceShip __Ship;
         private static VisualObject[] __GameObjects;
         private static Bullet __Bullet;
+        private static int _Score;
         public static void Load()
         {
             var game_objects = new List<VisualObject>();
@@ -103,7 +104,7 @@ namespace Project
             game_objects.Add(new HealthPack(
                 new Point(800, 300),
                 new Point(-5),
-                new Size(8, 8)));
+                new Size(20, 20)));
             __GameObjects = game_objects.ToArray();
             __Bullet = new Bullet(200);
             __Ship = new SpaceShip(new Point(10, 400), new Point(5, 5), new Size(10, 10));
@@ -132,7 +133,7 @@ namespace Project
             __Bullet?.Draw(g);
             __Ship.Draw(g);
             g.DrawString($"Energy: {__Ship.Energy}", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Italic), Brushes.White, 10, 10);
-
+            g.DrawString($"Score: {_Score}", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Italic), Brushes.White, 10, 30);
             __Buffer.Render();
         }
 
@@ -158,6 +159,7 @@ namespace Project
                         __GameObjects[i] = new Asteroid(
                             new Point(Width, new Random().Next(Height)),
                             new Point(new Random().Next(5) * -1, 1), 20);
+                        _Score += 10;
                         //System.Diagnostics.Debug.WriteLine(__GameObjects[i].GetType());
                         //MessageBox.Show("Астероид уничтожен!", "Столкновение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
