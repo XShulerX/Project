@@ -16,6 +16,10 @@ namespace Project
         private static BufferedGraphics __Buffer;
         private static Timer __Timer;
 
+        public static event EventHandler AllAsteroidsDestroyed;
+
+        public static event Action<string> Log;
+
         public static int Width { get; set; }
 
         public static int Height { get; set; }
@@ -40,7 +44,10 @@ namespace Project
             timer.Start();
             __Timer = timer;
             _Score = 0;
+
             form.KeyDown += OnFormKeyDown;
+
+            Log?.Invoke("Выполнена инициализация");
         }
 
         private static void OnFormKeyDown(object Sender, KeyEventArgs E)
@@ -48,7 +55,7 @@ namespace Project
             switch (E.KeyCode)
             {
                 case Keys.ControlKey:
-                    __Bullet = new Bullet(__Ship.Position.Y);
+                    __Bullets.Add(new Bullet(__Ship.Position.Y));
                     break;
 
                 case Keys.Up:
@@ -59,6 +66,7 @@ namespace Project
                     __Ship.MoveDown();
                     break;
             }
+            Log?.Invoke($"Нажата кнопка {E.KeyCode}");
         }
 
         private static void OnTimerTick(object sender, EventArgs e)
@@ -68,13 +76,20 @@ namespace Project
         }
 
         private static SpaceShip __Ship;
+        private static HealthPack __HealthPack;
         private static VisualObject[] __GameObjects;
-        private static Bullet __Bullet;
+        private static List<Bullet> __Bullets = new List<Bullet>();
+        private static List<Asteroid> __Asteroids = new List<Asteroid>();
+        private static int countAsteroids = 1;
         private static int _Score;
+
         public static void Load()
         {
+            Log?.Invoke("Загрузка данных сцены...");
+
             var game_objects = new List<VisualObject>();
             var rnd = new Random();
+            GenerateAsteroids(ref game_objects, ref countAsteroids);
 
             const int stars_count = 150;
             const int star_size = 5;
@@ -84,6 +99,7 @@ namespace Project
                     new Point(rnd.Next(0, Width), rnd.Next(0, Height)),
                     new Point(-rnd.Next(0, star_max_speed), 0),
                     star_size));
+            Log?.Invoke($"Создано звёзд {stars_count}");
 
             const int sputniks_count = 3;
             for (var i = 0; i < sputniks_count; i++)
@@ -92,34 +108,58 @@ namespace Project
                     new Point(rnd.Next(5), 1),
                     20, rnd.Next(30)));
 
-            const int asteroids_count = 10;
+            const int healthpack_size = 20;
+            game_objects.Add(new HealthPack(
+                    new Point(Width, rnd.Next(0, Height)),
+                    new Point(-5),
+                    new Size(healthpack_size, healthpack_size)));
+            __GameObjects = game_objects.ToArray();
+
+            __Ship = new SpaceShip(new Point(10, 400), new Point(5, 5), new Size(10, 10));
+            __Ship.ShipDestroyed += OnShipDestroyed;
+            AllAsteroidsDestroyed += OnAllAsteroidsDestroyed;
+            Log?.Invoke("Загрузка данных сцены выполнена успешно");
+        }
+
+        /// <summary>
+        /// Генерация астероидов
+        /// </summary>
+        /// <param name="game_objects">Лист игровых объектов</param>
+        /// <param name="count">Колличество астероидов</param>
+        private static void GenerateAsteroids(ref List<VisualObject> game_objects, ref int count)
+        {
+            Random rnd = new Random();
+            int asteroids_count = count++;
             const int asteroid_size = 25;
             const int asteroid_max_speed = 20;
             for (var i = 0; i < asteroids_count; i++)
-                game_objects.Add(
-                    new Asteroid(
-                        new Point(rnd.Next(0, Width), rnd.Next(0, Height)),
-                        new Point(-rnd.Next(0, asteroid_max_speed), 0),
-                        asteroid_size));
-            game_objects.Add(new HealthPack(
-                new Point(Width, rnd.Next(0, Height)),
-                new Point(-5),
-                new Size(20, 20)));
-            __GameObjects = game_objects.ToArray();
-            __Bullet = new Bullet(200);
-            __Ship = new SpaceShip(new Point(10, 400), new Point(5, 5), new Size(10, 10));
+            {
+                var asteroid = new Asteroid(
+                    new Point(rnd.Next(0, Width), rnd.Next(0, Height)),
+                    new Point(-rnd.Next(0, asteroid_max_speed), 0),
+                    asteroid_size);
+                game_objects.Add(asteroid);
+                __Asteroids.Add(asteroid);
+            }
+            Log?.Invoke($"Астероидов создано {asteroids_count}");
+        }
 
-            __Ship.ShipDestroyed += OnShipDestroyed;
+        /// <summary>
+        /// Обработчик события при уничтожении всех астероидов
+        /// </summary>
+        private static void OnAllAsteroidsDestroyed(object Sender, EventArgs E)
+        {
+            List<VisualObject> game_objects = new List<VisualObject>(__GameObjects);
+            GenerateAsteroids(ref game_objects, ref countAsteroids);
+            __GameObjects = game_objects.ToArray();
         }
 
         private static void OnShipDestroyed(object Sender, EventArgs E)
         {
-            
             __Timer.Stop();
             __Buffer.Graphics.Clear(Color.DarkBlue);
             __Buffer.Graphics.DrawString("Game over!!!", new Font(FontFamily.GenericSerif, 60, FontStyle.Bold), Brushes.Red, 200, 100);
             __Buffer.Render();
-            
         }
 
         /// <summary>Метод визуализации сцены</summary>
@@ -130,9 +170,10 @@ namespace Project
             g.Clear(Color.Black);
 
             foreach (var visual_object in __GameObjects)
-                visual_object.Draw(g);
+                visual_object?.Draw(g);
 
-            __Bullet?.Draw(g);
+            foreach (var bullet in __Bullets) bullet.Draw(g);
+
             __Ship.Draw(g);
             g.DrawString($"Energy: {__Ship.Energy}", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Italic), Brushes.White, 10, 10);
             g.DrawString($"Score: {_Score}", new Font(FontFamily.GenericSansSerif, 14, FontStyle.Italic), Brushes.White, 10, 30);
@@ -143,11 +184,15 @@ namespace Project
         public static void Update()
         {
             foreach (var visual_object in __GameObjects)
-                visual_object.Update();
+                visual_object?.Update();
 
-            __Bullet?.Update();
-            //if (__Bullet.Position.X > Width)
-            //    __Bullet = new Bullet(new Random().Next(Width));
+            var bullets_to_remove = new List<Bullet>();
+            foreach (var bullet in __Bullets)
+            {
+                bullet.Update();
+                if (bullet.Position.X > Width)
+                    bullets_to_remove.Add(bullet);
+            }
             for (var i = 0; i < __GameObjects.Length; i++)
             {
                 var obj = __GameObjects[i];
@@ -162,19 +207,28 @@ namespace Project
                             new Point(-5),
                             new Size(20, 20));
                     }
-                    if (__Bullet != null && __Bullet.CheckCollision(collision_object) && collision_object is Asteroid)
-                    {
-                        __Bullet = null;
-                        __GameObjects[i] = new Asteroid(
-                            new Point(Width, new Random().Next(Height)),
-                            new Point(new Random().Next(5) * -1, 1), 20);
-                        _Score += 10;
-                        //System.Diagnostics.Debug.WriteLine(__GameObjects[i].GetType());
-                        //MessageBox.Show("Астероид уничтожен!", "Столкновение", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    }
+                    foreach (var bullet in __Bullets.ToArray())
+                        if (bullet.CheckCollision(collision_object))
+                        {
+                            bullets_to_remove.Add(bullet);
+                            for (var j = 0; j < __Asteroids.Count; j++)
+                            {
+                                if (__Asteroids[j].Equals(__GameObjects[i]))
+                                {
+                                    __GameObjects[i] = null;
+                                    __Asteroids.RemoveAt(j);
+                                    break;
+                                }
+                            }
+
+                            _Score += 10;
+                        }
                 }
             }
-
+            foreach (var bullet in bullets_to_remove)
+                __Bullets.Remove(bullet);
+            if (__Asteroids.Count == 0)
+                AllAsteroidsDestroyed?.Invoke(__Ship, EventArgs.Empty);
         }
 
 
