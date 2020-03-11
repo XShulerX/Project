@@ -1,12 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace WPF.Models
 {
-    class Department
+    class Department : INotifyPropertyChanged
     {
+        private string _Name;
+
+        public string Name
+        {
+            get => _Name;
+            set
+            {
+                _Name = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
