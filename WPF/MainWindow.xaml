@@ -2,9 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPF"
-        mc:Ignorable="d"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+        xmlns:l="clr-namespace:WPF"
+        xmlns:m="clr-namespace:WPF.Models"
+        xmlns:data="clr-namespace:WPF.Data"
+        
         Title="MainWindow"
         Height="450" Width="800">
     <Grid>
@@ -12,8 +14,56 @@
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
-        <GroupBox Grid.Column="0" Header="GroupBox" HorizontalAlignment="Left" Height="100" Margin="80,157,0,0" VerticalAlignment="Top" Width="100"/>
-        <GroupBox Grid.Column="1" Header="GroupBox" HorizontalAlignment="Left" Height="100" Margin="406,195,0,0" VerticalAlignment="Top" Width="100"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto">
+            </RowDefinition>
+            <RowDefinition Height="auto">
+            </RowDefinition>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" >
+            <MenuItem Header="Файл">
+                <MenuItem Header="Сотрудники"></MenuItem>
+                <MenuItem Header="Департаменты"></MenuItem>
+                <MenuItem Header="Выход"></MenuItem>
+            </MenuItem>
+        </Menu>
+        
+        <GroupBox Grid.Column="0" Grid.Row="1" Header="Сотрудники" >
+            <ListView Name="List">
+                
+            </ListView>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Grid.Row="1" Header="Сотрудник">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="ID:"/>
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="Фамилия:"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="Имя:"/>
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="Отчество:"/>
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="Дата рожедения:"/>
+                <TextBlock Grid.Column="0" Grid.Row="5" Text="Возраст:"/>
+
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Id}"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding SurName}"/>
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Name}"/>
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Patronymic}"/>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding DayOfBirth}"/>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Age}"/>
+
+            </Grid>
+        </GroupBox>
 
     </Grid>
 </Window>
