@@ -5,6 +5,7 @@ namespace WPF.Models
     class Department : INotifyPropertyChanged
     {
         private string _Name;
+        public int Id { get; set; }
 
         public string Name
         {

@@ -9,6 +9,8 @@ namespace WPF.Models
 
         private string _Name;
 
+        private Department _Department;
+
         public int Id { get; set; }
 
         public string Name
@@ -23,7 +25,15 @@ namespace WPF.Models
 
         public string SurName { get; set; }
 
-        public Department Department { get; set; }
+        public Department Department
+        {
+            get => _Department;
+            set
+            {
+                _Department = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Department)));
+            }
+        }
 
         public string Patronymic { get; set; }
 

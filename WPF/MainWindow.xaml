@@ -9,6 +9,9 @@
         
         Title="MainWindow"
         Height="450" Width="800">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibleIfTrueConverter" />
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
@@ -17,7 +20,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto">
             </RowDefinition>
-            <RowDefinition Height="auto">
+            <RowDefinition>
             </RowDefinition>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" Grid.ColumnSpan="2" >
@@ -27,19 +30,65 @@
                 <MenuItem Header="Выход"></MenuItem>
             </MenuItem>
         </Menu>
-        
-        <GroupBox Grid.Column="0" Grid.Row="1" Header="Сотрудники" >
-            <ListView Name="List">
-                
-            </ListView>
+
+
+        <GroupBox Grid.Column="0" Grid.Row="1" Header="Данные">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Expander Name="Employeis" Header="Сотрудники" Grid.Column="0" Grid.Row="1" Expanded="Employeis_Expanded">
+                    <ListView Name="EmployeeList"
+                      ItemsSource="{x:Static data:TestData.Employees}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate DataType="m:Employee">
+                                <Border BorderThickness="1" BorderBrush="Gray" CornerRadius="4" Padding="3" Margin="0,5" Background="White">
+                                    <Border.Effect>
+                                        <DropShadowEffect/>
+                                    </Border.Effect>
+                                    <StackPanel ToolTip="{Binding DayOfBirth}">
+                                        <TextBlock Text="{Binding Id, StringFormat=id:{0}}"/>
+                                        <TextBlock Text="{Binding SurName, StringFormat=Фамилия:{0}}"/>
+                                        <TextBlock Text="{Binding Name, StringFormat= Имя:{0}}"/>
+                                        <TextBlock Text="{Binding Patronymic, StringFormat= Отчество:{0}}"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Expander>
+                <Expander Name="Departments" Header="Департаменты" Grid.Column="0" Grid.Row="0" Expanded="Departments_Expanded">
+                    <ListView Name="DepartmentsList"
+                      ItemsSource="{x:Static data:TestData.Departments}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate DataType="m:Employee">
+                                <Border BorderThickness="1" BorderBrush="Gray" CornerRadius="4" Padding="3" Margin="0,5" Background="White">
+                                    <Border.Effect>
+                                        <DropShadowEffect/>
+                                    </Border.Effect>
+                                    <StackPanel ToolTip="{Binding DayOfBirth}">
+                                        <TextBlock Text="{Binding Name, StringFormat= Имя:{0}}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Expander>
+            </Grid>
         </GroupBox>
-        <GroupBox Grid.Column="1" Grid.Row="1" Header="Сотрудник">
+
+
+        <GroupBox  Visibility="{Binding IsExpanded, ElementName=Employeis, Converter={StaticResource VisibleIfTrueConverter}}" Grid.Column="1" Grid.Row="1" Header="Сотрудник"
+                  DataContext="{Binding SelectedItem, ElementName=EmployeeList}"
+                  d:DataContext="{d:DesignInstance {x:Type m:Employee}}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -54,6 +103,7 @@
                 <TextBlock Grid.Column="0" Grid.Row="3" Text="Отчество:"/>
                 <TextBlock Grid.Column="0" Grid.Row="4" Text="Дата рожедения:"/>
                 <TextBlock Grid.Column="0" Grid.Row="5" Text="Возраст:"/>
+                <TextBlock Grid.Column="0" Grid.Row="6" Text="Департамент:"/>
 
                 <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Id}"/>
                 <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding SurName}"/>
@@ -61,7 +111,27 @@
                 <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Patronymic}"/>
                 <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding DayOfBirth}"/>
                 <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Age}"/>
+                <ComboBox  Grid.Column="1" Grid.Row="6"
+                           ItemsSource="{x:Static data:TestData.Departments}"
+                           SelectedIndex="{Binding Department.Id}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Visibility="{Binding IsExpanded, ElementName=Departments, Converter={StaticResource VisibleIfTrueConverter}}" Grid.Column="1" Grid.Row="1" Header="Департамент"
+                  DataContext="{Binding SelectedItem, ElementName=DepartmentsList}"
+                  d:DataContext="{d:DesignInstance {x:Type m:Department}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="Имя:"/>
+                
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}"/>
+                
             </Grid>
         </GroupBox>
 

@@ -24,5 +24,17 @@ namespace WPF
         {
             InitializeComponent();
         }
+
+        private void Departments_Expanded(object sender, RoutedEventArgs e)
+        {
+            if (((Expander)e.Source).IsExpanded)
+                Employeis.IsExpanded = false;            
+        }
+
+        private void Employeis_Expanded(object sender, RoutedEventArgs e)
+        {
+            if (((Expander)e.Source).IsExpanded)
+                Departments.IsExpanded = false;
+        }
     }
 }
