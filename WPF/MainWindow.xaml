@@ -112,8 +112,9 @@
                 <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding DayOfBirth}"/>
                 <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Age}"/>
                 <ComboBox  Grid.Column="1" Grid.Row="6"
-                           ItemsSource="{x:Static data:TestData.Departments}"
-                           SelectedIndex="{Binding Department.Id}"/>
+                           ItemsSource="{Binding DataContext , RelativeSource={RelativeSource AncestorType=Grid}}"
+                           SelectedIndex="{Binding Department}"
+                           />
             </Grid>
         </GroupBox>
         <GroupBox Visibility="{Binding IsExpanded, ElementName=Departments, Converter={StaticResource VisibleIfTrueConverter}}" Grid.Column="1" Grid.Row="1" Header="Департамент"

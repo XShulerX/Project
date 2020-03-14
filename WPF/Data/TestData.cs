@@ -24,7 +24,6 @@ namespace WPF.Data
                SurName = $"Фамилия {i}",
                Patronymic = $"Отчество {i}",
                DayOfBirth = DateTime.Now.Subtract(TimeSpan.FromDays(365 / 6 * (i + 18))),
-               Department = Departments[1]
            })
            .ToList();
     }
